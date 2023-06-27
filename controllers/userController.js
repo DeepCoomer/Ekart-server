@@ -10,16 +10,18 @@ import cloudinary from "cloudinary";
 export const registerUser = catchAsyncError(async (req, res, next) => {
   let public_id = "";
   let url = "";
-  const myCloud = await cloudinary.v2.uploader
-    .upload(req.body.avatar, {
-      folder: "avatars",
-      width: 150,
-      crop: "scale",
-    })
-    .then((result) => {
-      public_id = result.public_id;
-      url = result.secure_url;
-    });
+  if (req.body.avatar) {
+    const myCloud = await cloudinary.v2.uploader
+      .upload(req.body.avatar, {
+        folder: "avatars",
+        width: 150,
+        crop: "scale",
+      })
+      .then((result) => {
+        public_id = result.public_id;
+        url = result.secure_url;
+      });
+  }
 
   const { name, email, password } = req.body;
   const user = await User.create({
